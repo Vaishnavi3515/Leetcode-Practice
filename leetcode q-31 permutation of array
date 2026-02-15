@@ -16,10 +16,18 @@ public:
         }
     //2)sorting/reverse after pivot
      reverse(nums.begin()+idx+1,nums.end());
-    //3)swapping idx and idx+1
+     //3) finding the just grater element than idx
+     int j = -1;
+     for(int i = idx+1;i<n;i++){
+        if(nums[i]>nums[idx]){
+            j = i;
+            break;
+        }
+     }
+    //4)swapping idx and j
     int temp = nums[idx];
-    nums[idx] = nums[idx+1];
-    nums[idx+1] = temp;
+    nums[idx] = nums[j];
+    nums[j] = temp;
     return;
     }
 };
