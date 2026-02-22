@@ -1,0 +1,17 @@
+class Solution {
+public:
+    vector<int> getRow(int rowIndex) {
+        int m = rowIndex + 1; // Generate m = rowIndex+1 rows
+        vector<vector<int>> v;
+        for (int i = 1; i <= m; i++) { // i <= m (not m-1)
+            v.push_back(vector<int>(i, 1));
+        }
+        // Fill inner values (starting from row 2)
+        for (int i = 2; i < m; i++) {
+            for (int j = 1; j < i; j++) {
+                v[i][j] = v[i-1][j] + v[i-1][j-1];
+            }
+        }
+        return v[rowIndex]; //  Return the correct row
+    }
+};
