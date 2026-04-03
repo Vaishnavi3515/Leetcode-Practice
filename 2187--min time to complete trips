@@ -1,0 +1,30 @@
+class Solution {
+public:
+    // Check if a given time can complete at least totalTrips
+    bool canComplete(vector<int>& time, long long totalTrips, long long t) {
+        long long trips = 0;
+        for (int i = 0; i < time.size(); i++) {
+            trips += t / time[i]; // number of trips this bus can do in time t
+            if (trips >= totalTrips) return true; // early exit
+        }
+        return trips >= totalTrips;
+    }
+
+    long long minimumTime(vector<int>& time, int totalTrips) {
+        long long lo = 1; // minimum possible time
+        long long hi = 1e14; // large enough upper bound
+        long long ans = hi;
+
+        while (lo <= hi) {
+            long long mid = lo + (hi - lo) / 2;
+            if (canComplete(time, totalTrips, mid)) {
+                ans = mid;
+                hi = mid - 1; // try smaller time
+            } else {
+                lo = mid + 1; // need more time
+            }
+        }
+
+        return ans;
+    }
+};
