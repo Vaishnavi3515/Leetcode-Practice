@@ -1,0 +1,23 @@
+class Solution {
+public:
+    bool closeStrings(string str1, string str2) {
+        if(str1.length() != str2.length()) return false;
+
+        // Frequency maps for both strings
+        unordered_map<char,int> mp1, mp2;
+        for(char c : str1) mp1[c]++;
+        for(char c : str2) mp2[c]++;
+
+        // Step 1: Both strings must have the same set of characters
+        for(auto &x : mp1){
+            if(mp2.find(x.first) == mp2.end()) return false;
+        }
+
+        // Step 2: Compare frequency distributions
+        unordered_map<int,int> h1, h2;
+        for(auto &x : mp1) h1[x.second]++;
+        for(auto &x : mp2) h2[x.second]++;
+
+        return h1 == h2;
+    }
+};
