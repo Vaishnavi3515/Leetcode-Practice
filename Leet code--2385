@@ -1,0 +1,71 @@
+class Solution {
+public:
+    void markParent(TreeNode* root, unordered_map<TreeNode*, TreeNode*>& parent) {
+        if(root == NULL) return;
+        if(root->left) {
+            parent[root->left] = root;
+            markParent(root->left, parent);
+        }
+        if(root->right) {
+            parent[root->right] = root;
+            markParent(root->right, parent);
+        }
+    }
+
+    TreeNode* find(TreeNode* root, int start) {
+        if(root == NULL) return NULL;
+        if(root->val == start) return root;
+        TreeNode* left = find(root->left, start);
+        if(left) return left;
+        return find(root->right, start);
+    }
+
+    int amountOfTime(TreeNode* root, int start) {
+        unordered_map<TreeNode*, TreeNode*> parent;
+        markParent(root, parent);
+
+        TreeNode* first = find(root, start);
+
+        unordered_map<TreeNode*, bool> visited;
+        queue<TreeNode*> q;
+        q.push(first);
+        visited[first] = true;
+
+        int time = 0;
+
+        while(!q.empty()) {
+            int size = q.size();
+            bool spread = false;
+
+            for(int i=0; i<size; i++) {
+                TreeNode* node = q.front();
+                q.pop();
+
+                // Check left child
+                if(node->left && !visited[node->left]) {
+                    visited[node->left] = true;
+                    q.push(node->left);
+                    spread = true;
+                }
+
+                // Check right child
+                if(node->right && !visited[node->right]) {
+                    visited[node->right] = true;
+                    q.push(node->right);
+                    spread = true;
+                }
+
+                // Check parent
+                if(parent.find(node) != parent.end() && !visited[parent[node]]) {
+                    visited[parent[node]] = true;
+                    q.push(parent[node]);
+                    spread = true;
+                }
+            }
+
+            if(spread) time++;
+        }
+
+        return time;
+    }
+};
