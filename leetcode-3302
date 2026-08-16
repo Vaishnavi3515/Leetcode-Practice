@@ -1,0 +1,60 @@
+class Solution {
+public:
+    vector<int> validSequence(string word1, string word2) {
+        int n = word1.size();
+        int m = word2.size();
+
+        // suf[i] = maximum number of characters of word2
+        // that can be matched exactly using word1[i...n-1]
+        vector<int> suf(n + 1, 0);
+
+        int j = m - 1;
+
+        for (int i = n - 1; i >= 0; --i) {
+            suf[i] = suf[i + 1];
+
+            if (j >= 0 && word1[i] == word2[j]) {
+                ++suf[i];
+                --j;
+            }
+        }
+
+        vector<int> ans;
+        int pos = 0;
+        bool usedMismatch = false;
+
+        for (int j = 0; j < m; ++j) {
+
+            while (pos < n) {
+
+                // Option 1: exact match
+                if (word1[pos] == word2[j]) {
+                    ans.push_back(pos);
+                    ++pos;
+                    break;
+                }
+
+                // Option 2: use the one allowed mismatch
+                if (!usedMismatch) {
+                    int need = m - j - 1;
+
+                    // After taking pos as the mismatch,
+                    // can we match all remaining characters?
+                    if (suf[pos + 1] >= need) {
+                        ans.push_back(pos);
+                        ++pos;
+                        usedMismatch = true;
+                        break;
+                    }
+                }
+
+                ++pos;
+            }
+
+            if ((int)ans.size() != j + 1)
+                return {};
+        }
+
+        return ans;
+    }
+};
