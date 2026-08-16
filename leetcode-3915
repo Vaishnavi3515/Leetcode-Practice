@@ -1,0 +1,78 @@
+class Fenwick {
+public:
+    int n;
+    vector<long long> bit;
+
+    Fenwick(int n) {
+        this->n = n;
+        bit.assign(n + 2, 0);
+    }
+
+    void update(int idx, long long val) {
+        while (idx <= n) {
+            bit[idx] = max(bit[idx], val);
+            idx += idx & -idx;
+        }
+    }
+
+    long long query(int idx) {
+        long long res = 0;
+        while (idx > 0) {
+            res = max(res, bit[idx]);
+            idx -= idx & -idx;
+        }
+        return res;
+    }
+};
+
+class Solution {
+public:
+    long long maxAlternatingSum(vector<int>& nums, int k) {
+        int n = nums.size();
+
+        vector<int> vals = nums;
+        sort(vals.begin(), vals.end());
+        vals.erase(unique(vals.begin(), vals.end()), vals.end());
+
+        int m = vals.size();
+
+        vector<long long> up(n), down(n);
+
+        Fenwick downLess(m);
+        Fenwick upGreater(m);
+
+        auto rank = [&](int x) {
+            return (int)(lower_bound(vals.begin(), vals.end(), x) - vals.begin()) + 1;
+        };
+
+        long long ans = 0;
+
+        for (int i = 0; i < n; i++) {
+
+            if (i >= k) {
+                int p = i - k;
+
+                int r = rank(nums[p]);
+                downLess.update(r, down[p]);
+
+                int rev = m - r + 1;
+                upGreater.update(rev, up[p]);
+            }
+
+            int r = rank(nums[i]);
+
+            up[i] = nums[i];
+            long long best = downLess.query(r - 1);
+            if (best) up[i] = max(up[i], best + nums[i]);
+
+            down[i] = nums[i];
+            int rev = m - r + 1;
+            best = upGreater.query(rev - 1);
+            if (best) down[i] = max(down[i], best + nums[i]);
+
+            ans = max(ans, max(up[i], down[i]));
+        }
+
+        return ans;
+    }
+};
